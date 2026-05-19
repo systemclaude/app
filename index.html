@@ -3,690 +3,313 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Nexara AI · Enterprise Intelligence Platform</title>
+    <title>Stratus AI · The Decision Layer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #ffffff; color: #111827; line-height: 1.5; scroll-behavior: smooth; opacity: 0; transition: opacity 0.3s ease; }
+        body.loaded { opacity: 1; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #ffffff;
-            color: #111827;
-            line-height: 1.5;
-            scroll-behavior: smooth;
-        }
+        /* Preloader */
+        .preloader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.3s ease; }
+        .preloader.hidden { opacity: 0; pointer-events: none; }
+        .preloader-spinner { width: 44px; height: 44px; border: 3px solid #fef3c7; border-top-color: #f59e0b; border-radius: 50%; animation: spin 0.6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         :root {
-            --peach: #f97316;
-            --peach-dark: #ea580c;
-            --peach-deep: #c2410c;
-            --peach-soft: #fed7aa;
-            --peach-bg: #fff7ed;
-            --peach-muted: #ffedd5;
-            --gray-bg: #f9fafb;
-            --card-white: #ffffff;
+            --peach: #f59e0b;
+            --peach-dark: #d97706;
+            --peach-soft: #fde68a;
+            --peach-bg: #fffbeb;
+            --peach-muted: #fef3c7;
             --border: #e5e7eb;
-            --text-dark: #111827;
             --text-muted: #6b7280;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
             --radius: 28px;
             --radius-sm: 18px;
         }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 32px;
-        }
-
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+        
         /* Navigation */
-        .navbar {
-            background: rgba(255,255,255,0.96);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .navbar { background: rgba(255,255,255,0.96); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .nav-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; flex-wrap: wrap; gap: 1rem; }
+        .logo { font-size: 1.6rem; font-weight: 700; color: #111827; }
+        .logo span { color: var(--peach); }
+        .nav-links { display: flex; gap: 2rem; align-items: center; flex-wrap: wrap; }
+        .nav-links a { text-decoration: none; font-weight: 500; color: #4b5563; transition: 0.2s; }
+        .nav-links a:hover { color: var(--peach); }
+        .btn-primary { background: var(--peach); padding: 0.6rem 1.5rem; border-radius: 100px; color: white; font-weight: 600; text-decoration: none; transition: 0.2s; display: inline-block; }
+        .btn-primary:hover { background: var(--peach-dark); transform: translateY(-2px); }
+        .btn-outline { border: 1px solid var(--border); padding: 0.6rem 1.5rem; border-radius: 100px; background: white; font-weight: 500; text-decoration: none; color: #111827; display: inline-block; }
+        .btn-outline:hover { border-color: var(--peach); background: var(--peach-bg); }
 
-        .nav-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+        /* Hero с прогресс-баром */
+        .hero { padding: 5rem 0 4rem; background: linear-gradient(125deg, var(--peach-bg) 0%, #ffffff 65%); }
+        .hero-grid { display: flex; flex-wrap: wrap; align-items: center; gap: 3rem; }
+        .hero-content { flex: 1.2; }
+        .hero-badge { background: var(--peach-soft); color: var(--peach-dark); border-radius: 100px; padding: 0.25rem 1rem; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-bottom: 1rem; }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 700; line-height: 1.2; margin-bottom: 1rem; }
+        .hero-highlight { color: var(--peach); }
+        .hero-content p { font-size: 1.1rem; color: var(--text-muted); max-width: 90%; margin-bottom: 2rem; }
+        .hero-image { flex: 0.8; text-align: center; }
+        .hero-image img { max-width: 100%; border-radius: var(--radius); }
 
-        .logo {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
+        /* Stats Cards with progress */
+        .stats-cards { padding: 4rem 0; background: #ffffff; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .stat-card { background: var(--peach-bg); border-radius: var(--radius-sm); padding: 1.5rem; border: 1px solid var(--peach-soft); }
+        .stat-card h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 0.5rem; }
+        .stat-number { font-size: 2.5rem; font-weight: 800; color: var(--peach); margin-bottom: 0.5rem; }
+        .progress-bar { height: 6px; background: var(--peach-muted); border-radius: 3px; margin-top: 1rem; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--peach); border-radius: 3px; width: 0; transition: width 0.6s ease; }
 
-        .logo span {
-            color: var(--peach);
-        }
+        /* Horizontal scroll industries */
+        .industries { padding: 4rem 0; background: #f9fafb; }
+        .industries-scroll { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+        .industry-tag { background: white; border: 1px solid var(--border); border-radius: 100px; padding: 0.75rem 1.5rem; white-space: nowrap; font-weight: 500; transition: 0.2s; cursor: pointer; }
+        .industry-tag:hover { border-color: var(--peach); background: var(--peach-bg); color: var(--peach); }
+        .industry-tag.active { background: var(--peach); color: white; border-color: var(--peach); }
 
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
+        /* Two column with metrics */
+        .two-col-metrics { padding: 5rem 0; }
+        .two-col-grid { display: flex; flex-wrap: wrap; gap: 3rem; }
+        .metric-list { flex: 1; }
+        .metric-row { margin-bottom: 2rem; }
+        .metric-row-header { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-weight: 500; }
+        .metric-bar { height: 8px; background: var(--peach-muted); border-radius: 4px; overflow: hidden; }
+        .metric-fill { height: 100%; background: var(--peach); border-radius: 4px; width: 0; transition: width 0.6s ease; }
 
-        .nav-links a {
-            text-decoration: none;
-            font-weight: 500;
-            color: var(--text-muted);
-            transition: 0.2s;
-        }
+        /* Case Studies Grid */
+        .cases-section { padding: 5rem 0; background: var(--peach-bg); }
+        .cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .case-study { background: white; border-radius: var(--radius-sm); padding: 1.5rem; border: 1px solid var(--border); transition: 0.2s; }
+        .case-study:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1); }
+        .case-study i { font-size: 2rem; color: var(--peach); margin-bottom: 1rem; }
+        .case-study .result { font-size: 1.8rem; font-weight: 800; color: var(--peach); margin: 0.5rem 0; }
 
-        .nav-links a:hover {
-            color: var(--peach);
-        }
+        /* Blog minimal */
+        .blog-minimal { padding: 5rem 0; }
+        .blog-minimal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .blog-minimal-card { border-bottom: 2px solid var(--border); padding-bottom: 1rem; transition: 0.2s; }
+        .blog-minimal-card:hover { border-bottom-color: var(--peach); }
+        .blog-minimal-card .date { font-size: 0.7rem; color: var(--peach); text-transform: uppercase; letter-spacing: 1px; }
+        .blog-minimal-card h3 { margin: 0.5rem 0; font-size: 1.1rem; }
 
-        .btn-primary {
-            background: var(--peach);
-            padding: 0.6rem 1.5rem;
-            border-radius: 100px;
-            color: white;
-            font-weight: 600;
-            text-decoration: none;
-            transition: 0.2s;
-            border: none;
-            display: inline-block;
-        }
-
-        .btn-primary:hover {
-            background: var(--peach-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-outline {
-            border: 1px solid var(--border);
-            padding: 0.6rem 1.5rem;
-            border-radius: 100px;
-            background: white;
-            font-weight: 500;
-            text-decoration: none;
-            color: var(--text-dark);
-            display: inline-block;
-        }
-
-        .btn-outline:hover {
-            border-color: var(--peach);
-            background: var(--peach-bg);
-        }
-
-        /* Hero */
-        .hero {
-            padding: 5rem 0;
-            background: linear-gradient(125deg, var(--peach-bg) 0%, #ffffff 65%);
-        }
-
-        .hero-grid {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 3rem;
-        }
-
-        .hero-content {
-            flex: 1;
-        }
-
-        .hero-badge {
-            background: var(--peach-soft);
-            color: var(--peach-dark);
-            border-radius: 100px;
-            padding: 0.25rem 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-content h1 {
-            font-size: 3.2rem;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-            margin-bottom: 1.2rem;
-            color: var(--text-dark);
-        }
-
-        .hero-highlight {
-            color: var(--peach);
-        }
-
-        .hero-content p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 90%;
-            margin-bottom: 2rem;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .stat-item h3 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--peach);
-        }
-
-        .stat-item span {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .hero-image {
-            flex: 1;
-            text-align: center;
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            border-radius: var(--radius);
-            background: #e2e8f0;
-        }
-
-        /* Sections */
-        section {
-            padding: 5rem 0;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-
-        .section-sub {
-            text-align: center;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 3rem;
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: var(--card-white);
-            border-radius: var(--radius-sm);
-            padding: 1.8rem;
-            border: 1px solid var(--border);
-            transition: 0.2s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--peach-soft);
-        }
-
-        .feature-icon {
-            font-size: 2rem;
-            color: var(--peach);
-            margin-bottom: 1rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Blog Cards */
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-
-        .blog-card {
-            background: var(--card-white);
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            border: 1px solid var(--border);
-            transition: 0.2s;
-        }
-
-        .blog-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-md);
-            border-color: var(--peach-soft);
-        }
-
-        .blog-img {
-            background: var(--peach-muted);
-            height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: var(--peach);
-        }
-
-        .blog-content {
-            padding: 1.5rem;
-        }
-
-        .blog-tag {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--peach);
-            letter-spacing: 0.5px;
-        }
-
-        .blog-card h3 {
-            font-size: 1.15rem;
-            margin: 0.5rem 0;
-        }
-
-        .blog-card p {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .blog-meta {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 1rem;
-        }
-
-        /* Pricing */
-        .pricing-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-
-        .pricing-card {
-            background: var(--card-white);
-            border-radius: var(--radius);
-            flex: 1;
-            min-width: 280px;
-            padding: 2rem;
-            border: 1px solid var(--border);
-            transition: 0.2s;
-        }
-
-        .pricing-card.featured {
-            border-top: 3px solid var(--peach);
-            box-shadow: var(--shadow-md);
-        }
-
-        .price {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--peach);
-            margin: 1rem 0;
-        }
-
-        .price span {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: var(--text-muted);
-        }
-
-        .pricing-card ul {
-            list-style: none;
-            margin: 1.5rem 0;
-        }
-
-        .pricing-card li {
-            padding: 0.5rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .pricing-card li i {
-            color: var(--peach);
-            font-size: 0.8rem;
-        }
-
-        /* CTA */
-        .cta-section {
-            background: var(--peach-bg);
-            border-radius: var(--radius);
-            text-align: center;
-            padding: 3rem;
-            margin: 2rem 0;
-            border: 1px solid var(--peach-soft);
-        }
-
-        .cta-section h2 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-
-        .cta-section .btn-primary {
-            margin-top: 1rem;
-        }
+        /* Pricing with toggle */
+        .pricing-section { padding: 5rem 0; }
+        .pricing-toggle { display: flex; justify-content: center; gap: 1rem; margin-bottom: 3rem; }
+        .toggle-btn { padding: 0.5rem 1.5rem; border-radius: 100px; background: white; border: 1px solid var(--border); cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .toggle-btn.active { background: var(--peach); color: white; border-color: var(--peach); }
+        .pricing-cards { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+        .price-card { background: white; border-radius: var(--radius); flex: 1; min-width: 280px; padding: 2rem; border: 1px solid var(--border); text-align: center; transition: 0.2s; }
+        .price-card:hover { transform: translateY(-5px); }
+        .price-card.featured { border-top: 3px solid var(--peach); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+        .price-amount { font-size: 2.8rem; font-weight: 800; color: var(--peach); margin: 1rem 0; }
+        .price-yearly { display: none; }
 
         /* Privacy */
-        .privacy-block {
-            background: var(--card-white);
-            border-radius: var(--radius-sm);
-            padding: 2rem;
-            margin: 2rem 0;
-            border: 1px solid var(--border);
-            scroll-margin-top: 80px;
-        }
-
-        .privacy-block h2, .privacy-block h3 {
-            color: var(--text-dark);
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .privacy-block h2:first-child {
-            margin-top: 0;
-        }
-
-        .privacy-block p, .privacy-block li {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .privacy-block ul {
-            padding-left: 1.2rem;
-        }
+        .privacy-block { background: white; border-radius: var(--radius-sm); padding: 2rem; margin: 2rem 0; border: 1px solid var(--border); scroll-margin-top: 80px; }
+        .privacy-block h2, .privacy-block h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .privacy-block h2:first-child { margin-top: 0; }
+        .privacy-block p, .privacy-block li { color: var(--text-muted); font-size: 0.9rem; }
 
         /* Footer */
-        footer {
-            background: #0f172a;
-            color: #94a3b8;
-            padding: 3rem 0 2rem;
-            margin-top: 2rem;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-grid h4 {
-            color: white;
-            margin-bottom: 1rem;
-            font-size: 0.9rem;
-        }
-
-        .footer-grid a, .footer-grid p {
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-grid a:hover {
-            color: var(--peach);
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--peach);
-            color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            transition: 0.2s;
-            z-index: 99;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        .back-to-top:hover {
-            background: var(--peach-dark);
-            transform: translateY(-2px);
-        }
+        footer { background: #0f172a; color: #94a3b8; padding: 3rem 0 2rem; }
+        .footer-bottom { text-align: center; font-size: 0.75rem; padding-top: 1.5rem; border-top: 1px solid #334155; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; background: var(--peach); color: white; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.2s; z-index: 99; }
+        .back-to-top:hover { background: var(--peach-dark); transform: translateY(-3px); }
 
         @media (max-width: 768px) {
             .container { padding: 0 20px; }
             .hero-content h1 { font-size: 2.2rem; }
             .nav-wrapper { flex-direction: column; }
-            .section-title { font-size: 1.6rem; }
         }
     </style>
 </head>
 <body>
 
+<div class="preloader" id="preloader"><div class="preloader-spinner"></div></div>
+
 <nav class="navbar">
     <div class="container nav-wrapper">
-        <div class="logo">Nexara<span>AI</span></div>
+        <div class="logo">Stratus<span>AI</span></div>
         <div class="nav-links">
             <a href="#home">Home</a>
-            <a href="#features">Features</a>
-            <a href="#blog">Blog</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#privacy">Privacy</a>
-            <a href="#" class="btn-primary">Get started</a>
+            <a href="#stats">Impact</a>
+            <a href="#cases">Results</a>
+            <a href="#pricing">Plans</a>
+            <a href="#privacy">Legal</a>
+            <a href="#" class="btn-primary">Demo →</a>
         </div>
     </div>
 </nav>
 
 <main>
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section id="home" class="hero">
         <div class="container hero-grid">
             <div class="hero-content">
-                <div class="hero-badge">Enterprise AI · Autonomous Platform</div>
-                <h1>Intelligence that <span class="hero-highlight">transforms</span> your future</h1>
-                <p>Deploy custom LLMs, autonomous agents, and predictive analytics on a secure, scalable infrastructure built for modern enterprises.</p>
-                <a href="#" class="btn-primary">Start free trial →</a>
-                <div class="hero-stats">
-                    <div class="stat-item"><h3>99.99%</h3><span>Uptime SLA</span></div>
-                    <div class="stat-item"><h3>10B+</h3><span>API calls</span></div>
-                    <div class="stat-item"><h3>2000+</h3><span>enterprises</span></div>
-                </div>
+                <div class="hero-badge">Stratus Core 2.0</div>
+                <h1>The <span class="hero-highlight">decision layer</span> for data‑driven teams</h1>
+                <p>Stratus sits between your data and your decisions. Ask questions in plain English. Get answers, charts, and recommendations instantly.</p>
+                <a href="#" class="btn-primary">Talk to AI →</a>
             </div>
             <div class="hero-image">
-                <img src="https://placehold.co/550x450/1e293b/ffffff?text=AI+Dashboard&font=inter" alt="Nexara AI platform">
+                <img src="https://placehold.co/500x450/1e293b/ffffff?text=AI+Decision+Layer&font=inter" alt="Stratus AI">
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features">
+    <!-- Stats Cards with progress bars -->
+    <section id="stats" class="stats-cards">
         <div class="container">
-            <h2 class="section-title">Built for production AI</h2>
-            <p class="section-sub">Everything you need to build, deploy, and scale machine learning models</p>
-            <div class="features-grid">
-                <div class="feature-card"><div class="feature-icon"><i class="fas fa-microchip"></i></div><h3>LLM Fine-tuning</h3><p>Customize foundation models with your proprietary data and domain expertise.</p></div>
-                <div class="feature-card"><div class="feature-icon"><i class="fas fa-network-wired"></i></div><h3>Agent Orchestration</h3><p>Build multi-agent systems that collaborate on complex workflows.</p></div>
-                <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>Predictive Analytics</h3><p>Forecast trends, detect anomalies, and optimize operations with 94% accuracy.</p></div>
-                <div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h3>Enterprise Security</h3><p>GDPR, SOC2 Type II, HIPAA-ready with end-to-end encryption.</p></div>
+            <div class="stats-grid">
+                <div class="stat-card"><h3>Accuracy</h3><div class="stat-number">98.7%</div><p>on complex queries</p><div class="progress-bar"><div class="progress-fill" style="width: 98.7%;"></div></div></div>
+                <div class="stat-card"><h3>Speed improvement</h3><div class="stat-number">12.5x</div><p>faster insights</p><div class="progress-bar"><div class="progress-fill" style="width: 92%;"></div></div></div>
+                <div class="stat-card"><h3>ROI</h3><div class="stat-number">347%</div><p>average 3‑year return</p><div class="progress-bar"><div class="progress-fill" style="width: 87%;"></div></div></div>
+                <div class="stat-card"><h3>Data sources</h3><div class="stat-number">150+</div><p>native integrations</p><div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div></div>
             </div>
         </div>
     </section>
 
-    <!-- Blog Section -->
-    <section id="blog">
+    <!-- Horizontal industries -->
+    <div class="industries">
         <div class="container">
-            <h2 class="section-title">Latest insights</h2>
-            <p class="section-sub">Research, engineering, and AI trends from our team</p>
-            <div class="blog-grid">
-                <div class="blog-card">
-                    <div class="blog-img"><i class="fas fa-file-alt"></i></div>
-                    <div class="blog-content">
-                        <div class="blog-tag">Engineering</div>
-                        <h3>Building reliable RAG systems at scale</h3>
-                        <p>Lessons learned from production deployments across 50+ enterprises.</p>
-                        <div class="blog-meta">May 20, 2025 · 6 min read</div>
-                    </div>
-                </div>
-                <div class="blog-card">
-                    <div class="blog-img"><i class="fas fa-chart-simple"></i></div>
-                    <div class="blog-content">
-                        <div class="blog-tag">Research</div>
-                        <h3>New benchmarks for agentic evaluation</h3>
-                        <p>How we measure real-world agent performance and reliability.</p>
-                        <div class="blog-meta">May 15, 2025 · 8 min read</div>
-                    </div>
-                </div>
-                <div class="blog-card">
-                    <div class="blog-img"><i class="fas fa-lock"></i></div>
-                    <div class="blog-content">
-                        <div class="blog-tag">Security</div>
-                        <h3>LLM security: prompt injection and guardrails</h3>
-                        <p>Best practices for securing production AI systems.</p>
-                        <div class="blog-meta">May 10, 2025 · 5 min read</div>
-                    </div>
-                </div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 1.5rem;">Trusted across industries</h2>
+            <div class="industries-scroll">
+                <span class="industry-tag active">Fintech</span>
+                <span class="industry-tag">Healthcare</span>
+                <span class="industry-tag">Retail</span>
+                <span class="industry-tag">Logistics</span>
+                <span class="industry-tag">Manufacturing</span>
+                <span class="industry-tag">SaaS</span>
+                <span class="industry-tag">Insurance</span>
             </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing">
-        <div class="container">
-            <h2 class="section-title">Flexible plans</h2>
-            <p class="section-sub">Start free, scale as you grow. No hidden fees.</p>
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <h3>Developer</h3>
-                    <div class="price">$0<span>/month</span></div>
-                    <p>10K API calls, community support</p>
-                    <ul>
-                        <li><i class="fas fa-check"></i> 10K API calls/month</li>
-                        <li><i class="fas fa-check"></i> Core models access</li>
-                        <li><i class="fas fa-check"></i> Community support</li>
-                        <li><i class="fas fa-check"></i> Basic analytics</li>
-                    </ul>
-                    <a href="#" class="btn-outline" style="display: block; text-align: center;">Get started</a>
-                </div>
-                <div class="pricing-card featured">
-                    <h3>Pro</h3>
-                    <div class="price">$79<span>/month</span></div>
-                    <p>500K API calls, priority support</p>
-                    <ul>
-                        <li><i class="fas fa-check"></i> 500K API calls/month</li>
-                        <li><i class="fas fa-check"></i> Advanced models</li>
-                        <li><i class="fas fa-check"></i> Priority 24/7 support</li>
-                        <li><i class="fas fa-check"></i> Custom fine-tuning</li>
-                        <li><i class="fas fa-check"></i> Advanced analytics</li>
-                    </ul>
-                    <a href="#" class="btn-primary" style="display: block; text-align: center;">Start trial</a>
-                </div>
-                <div class="pricing-card">
-                    <h3>Enterprise</h3>
-                    <div class="price">Custom</div>
-                    <p>Unlimited, on-prem, dedicated support</p>
-                    <ul>
-                        <li><i class="fas fa-check"></i> Unlimited API calls</li>
-                        <li><i class="fas fa-check"></i> On-prem / VPC deployment</li>
-                        <li><i class="fas fa-check"></i> Custom SLA</li>
-                        <li><i class="fas fa-check"></i> Dedicated support team</li>
-                        <li><i class="fas fa-check"></i> SOC2 / HIPAA compliant</li>
-                    </ul>
-                    <a href="#" class="btn-outline" style="display: block; text-align: center;">Contact sales</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <div class="container">
-        <div class="cta-section">
-            <h2>Ready to transform with AI?</h2>
-            <p style="opacity: 0.8;">Join 2000+ enterprises already using Nexara AI.</p>
-            <a href="#" class="btn-primary">Start free trial →</a>
         </div>
     </div>
 
-    <!-- Privacy Policy Section -->
+    <!-- Two column with metrics -->
+    <div class="two-col-metrics">
+        <div class="container">
+            <div class="two-col-grid">
+                <div class="metric-list"><h2 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Why <span class="hero-highlight">Stratus</span> outperforms</h2>
+                    <div class="metric-row"><div class="metric-row-header"><span>Query accuracy</span><span>98.7%</span></div><div class="metric-bar"><div class="metric-fill" style="width: 98.7%;"></div></div></div>
+                    <div class="metric-row"><div class="metric-row-header"><span>Response time</span><span>0.8s</span></div><div class="metric-bar"><div class="metric-fill" style="width: 94%;"></div></div></div>
+                    <div class="metric-row"><div class="metric-row-header"><span>User satisfaction</span><span>94%</span></div><div class="metric-bar"><div class="metric-fill" style="width: 94%;"></div></div></div>
+                    <div class="metric-row"><div class="metric-row-header"><span>Adoption rate</span><span>89%</span></div><div class="metric-bar"><div class="metric-fill" style="width: 89%;"></div></div></div>
+                </div>
+                <div class="metric-list"><h2 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Measurable <span class="hero-highlight">impact</span></h2>
+                    <div class="metric-row"><div class="metric-row-header"><span>Time saved per analyst</span><span>12hrs/week</span></div><div class="metric-bar"><div class="metric-fill" style="width: 85%;"></div></div></div>
+                    <div class="metric-row"><div class="metric-row-header"><span>Data requests automated</span><span>73%</span></div><div class="metric-bar"><div class="metric-fill" style="width: 73%;"></div></div></div>
+                    <div class="metric-row"><div class="metric-row-header"><span>Faster decision‑making</span><span>3.2x</span></div><div class="metric-bar"><div class="metric-fill" style="width: 76%;"></div></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Case Studies -->
+    <section id="cases" class="cases-section">
+        <div class="container">
+            <h2 style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">Real results from real teams</h2>
+            <div class="cases-grid">
+                <div class="case-study"><i class="fas fa-chart-line"></i><div class="result">42%</div><h3>faster reporting</h3><p>Finance team automated 80% of recurring data requests.</p></div>
+                <div class="case-study"><i class="fas fa-dollar-sign"></i><div class="result">$1.8M</div><h3>annual savings</h3><p>Customer support analytics reduced churn by 23%.</p></div>
+                <div class="case-study"><i class="fas fa-clock"></i><div class="result">67%</div><h3>less time in dashboards</h3><p>Marketing team shifted from reporting to strategy.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Minimal -->
+    <section class="blog-minimal">
+        <div class="container">
+            <h2 style="font-size: 2rem; text-align: center; margin-bottom: 3rem;">Latest updates</h2>
+            <div class="blog-minimal-grid">
+                <div class="blog-minimal-card"><div class="date">May 19, 2025</div><h3>Introducing natural language querying for Snowflake</h3><p>Ask questions directly from your data warehouse.</p></div>
+                <div class="blog-minimal-card"><div class="date">May 14, 2025</div><h3>Stratus achieves SOC2 Type II certification</h3><p>Enterprise security standards, verified.</p></div>
+                <div class="blog-minimal-card"><div class="date">May 8, 2025</div><h3>New: Slack integration for instant answers</h3><p>Ask Stratus directly from your team channels.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing with toggle -->
+    <section id="pricing" class="pricing-section">
+        <div class="container">
+            <h2 style="font-size: 2rem; text-align: center; margin-bottom: 1rem;">Simple, transparent pricing</h2>
+            <div class="pricing-toggle">
+                <div class="toggle-btn active" data-period="monthly">Monthly</div>
+                <div class="toggle-btn" data-period="yearly">Yearly (save 20%)</div>
+            </div>
+            <div class="pricing-cards">
+                <div class="price-card"><h3>Team</h3><div class="price-amount monthly-price">$39<span style="font-size: 1rem;">/month</span></div><div class="price-amount yearly-price" style="display: none;">$31<span style="font-size: 1rem;">/month</span></div><p>billed yearly</p><ul style="list-style: none; margin: 1rem 0;"><li style="padding: 0.3rem 0;">✓ 5 users included</li><li style="padding: 0.3rem 0;">✓ 50K queries/month</li><li style="padding: 0.3rem 0;">✓ Email support</li></ul><a href="#" class="btn-outline">Get started</a></div>
+                <div class="price-card featured"><h3>Business</h3><div class="price-amount monthly-price">$99<span style="font-size: 1rem;">/month</span></div><div class="price-amount yearly-price" style="display: none;">$79<span style="font-size: 1rem;">/month</span></div><p>billed yearly</p><ul style="list-style: none; margin: 1rem 0;"><li style="padding: 0.3rem 0;">✓ 20 users included</li><li style="padding: 0.3rem 0;">✓ 250K queries/month</li><li style="padding: 0.3rem 0;">✓ Priority support</li><li style="padding: 0.3rem 0;">✓ API access</li></ul><a href="#" class="btn-primary">Start trial</a></div>
+                <div class="price-card"><h3>Enterprise</h3><div class="price-amount">Custom</div><p>Unlimited everything</p><ul style="list-style: none; margin: 1rem 0;"><li style="padding: 0.3rem 0;">✓ Unlimited users</li><li style="padding: 0.3rem 0;">✓ On‑prem deployment</li><li style="padding: 0.3rem 0;">✓ Dedicated support</li><li style="padding: 0.3rem 0;">✓ SOC2 / HIPAA</li></ul><a href="#" class="btn-outline">Contact sales</a></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy -->
     <div class="container" id="privacy">
         <div class="privacy-block">
             <h2><i class="fas fa-shield-alt" style="color: var(--peach);"></i> Privacy Policy</h2>
-            <p><strong>Effective Date:</strong> May 2025 | <strong>Last Updated:</strong> May 21, 2025</p>
-            <p>At Nexara AI ("we," "our"), your privacy is fundamental to our mission. This Privacy Policy explains how we handle your information.</p>
-            
-            <h3>1. Information We Collect</h3>
-            <p><strong>Account Data:</strong> Name, email address, billing information, and account preferences. <strong>Usage Data:</strong> API request logs, model inputs/outputs metadata, and feature usage patterns. <strong>Feedback:</strong> Optional survey responses and support communications.</p>
-            
-            <h3>2. How We Use Your Information</h3>
-            <p>To provide and maintain our Service, improve model accuracy and platform performance, process payments, send important updates, and comply with legal obligations. We never sell your personal data to third parties.</p>
-            
-            <h3>3. Data Retention & Security</h3>
-            <p>We retain personal data for as long as your account is active. You may delete your account at any time. Industry-standard encryption (TLS 1.3, AES-256) protects data in transit and at rest.</p>
-            
-            <h3>4. Third-Party Services</h3>
-            <p>We use trusted partners for cloud infrastructure (AWS, Google Cloud), payment processing (Stripe), and analytics. All partners comply with GDPR/CCPA requirements.</p>
-            
-            <h3>5. Your Privacy Rights (GDPR / CCPA)</h3>
-            <p>You have the right to access, correct, delete, or restrict processing of your data. Contact <strong>privacy@nexara.ai</strong> to exercise these rights.</p>
-            
-            <h3>6. Cookies & Tracking</h3>
-            <p>We use essential cookies for authentication. No invasive tracking. You can manage cookie preferences via your browser.</p>
-            
-            <h3>7. Children's Privacy</h3>
-            <p>Our services are not directed to individuals under 16. We do not knowingly collect data from minors.</p>
-            
-            <h3>8. International Data Transfers</h3>
-            <p>Data may be processed in the US, EU, or other jurisdictions. We implement Standard Contractual Clauses (SCCs) for international transfers.</p>
-            
-            <h3>9. Changes to This Policy</h3>
-            <p>We may update this Privacy Policy periodically. Material changes will be notified via email or on our website.</p>
-            
-            <p><strong>Contact Us:</strong> Data Protection Officer at <strong>dpo@nexara.ai</strong> or mail: Nexara AI, 101 Tech Hub, San Francisco, CA 94105.</p>
-            <p style="margin-top: 1rem;"><i class="fas fa-check-circle" style="color: var(--peach);"></i> Nexara AI — building responsible intelligence.</p>
+            <p><strong>Effective:</strong> May 2025 | Stratus AI Inc.</p>
+            <h3>1. Information collection</h3><p>Account data, query logs, and usage patterns. Your business data is never used for training public models.</p>
+            <h3>2. Data usage</h3><p>To provide query services, improve accuracy, process payments, and ensure security. No selling.</p>
+            <h3>3. Your rights</h3><p>Access, correct, delete, export. Email privacy@stratus.ai</p>
+            <h3>4. Security</h3><p>AES‑256, TLS 1.3, regular audits. SOC2 Type II certified.</p>
+            <p><strong>Contact:</strong> dpo@stratus.ai | Stratus AI, 101 Data Way, San Francisco, CA 94105</p>
         </div>
     </div>
 </main>
 
-<!-- Footer -->
 <footer>
     <div class="container">
-        <div class="footer-grid">
-            <div><h4>Nexara<span style="color:#f97316;">AI</span></h4><p>Enterprise AI platform</p><div style="margin-top:0.5rem;">© 2025</div></div>
-            <div><h4>Product</h4><p><a href="#features">Features</a></p><p><a href="#pricing">Pricing</a></p><p>API Docs</p><p>Status</p></div>
-            <div><h4>Resources</h4><p><a href="#blog">Blog</a></p><p>Documentation</p><p>Support</p><p>Community</p></div>
-            <div><h4>Legal</h4><p><a href="#privacy">Privacy Policy</a></p><p>Terms of Service</p><p>Security</p><p>Compliance</p></div>
-        </div>
-        <div style="border-top: 1px solid #334155; padding-top: 1.5rem; text-align: center; font-size: 0.75rem;">
-            Built for the enterprise. Trusted by industry leaders.
+        <div class="footer-bottom">
+            <p style="margin-bottom: 1rem;">© 2025 Stratus AI — The decision layer for modern teams</p>
+            <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+                <a href="#home" style="color: #94a3b8; text-decoration: none;">Home</a>
+                <a href="#stats" style="color: #94a3b8; text-decoration: none;">Impact</a>
+                <a href="#cases" style="color: #94a3b8; text-decoration: none;">Results</a>
+                <a href="#pricing" style="color: #94a3b8; text-decoration: none;">Pricing</a>
+                <a href="#privacy" style="color: #94a3b8; text-decoration: none;">Privacy</a>
+            </div>
         </div>
     </div>
 </footer>
 
 <a href="#" class="back-to-top"><i class="fas fa-arrow-up"></i></a>
-<script src="protection.js"></script>
+
 <script>
+    // Preloader
+    window.addEventListener('load', function() {
+        const preloader = document.getElementById('preloader');
+        setTimeout(function() {
+            preloader.classList.add('hidden');
+            document.body.classList.add('loaded');
+            setTimeout(function() { preloader.style.display = 'none'; }, 300);
+        }, 800);
+    });
+
+    // Pricing toggle
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    const monthlyPrices = document.querySelectorAll('.monthly-price');
+    const yearlyPrices = document.querySelectorAll('.yearly-price');
+    
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            toggleBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const period = this.dataset.period;
+            if (period === 'monthly') {
+                monthlyPrices.forEach(p => p.style.display = 'block');
+                yearlyPrices.forEach(p => p.style.display = 'none');
+            } else {
+                monthlyPrices.forEach(p => p.style.display = 'none');
+                yearlyPrices.forEach(p => p.style.display = 'block');
+            }
+        });
+    });
+
+    // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
@@ -699,5 +322,7 @@
         });
     });
 </script>
+
+<script src="protection.js"></script>
 </body>
 </html>
